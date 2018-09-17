@@ -37,6 +37,7 @@ public class FrontController extends HttpServlet {
 		out.print("<h3>command="+command+"</h3>");
 		
 		out.print("<h3>helloWorld!</h3>");
+		out.print("<h3>master branch change a code</h3>");
 		
 		//service객체 선언
 		Action action = null;
