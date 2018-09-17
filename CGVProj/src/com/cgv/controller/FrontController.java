@@ -36,6 +36,8 @@ public class FrontController extends HttpServlet {
 		out.print("<h3>contextPath="+contextPath+"</h3>");
 		out.print("<h3>command="+command+"</h3>");
 		
+		out.print("<h3>helloWorld!</h3>");
+		
 		//service객체 선언
 		Action action = null;
 		ActionForward forward = null;
