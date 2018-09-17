@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class FrontController extends HttpServlet {
 	//command에 해당하는 instance를 저장하기 위한 Map
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html; charset=URF-8");
+		response.setContentType("text/html; charset=utf-8");
 		
 		//Uri command경로 읽어 들이기
 		String RequestURI = request.getRequestURI();
@@ -36,10 +37,6 @@ public class FrontController extends HttpServlet {
 		out.print("<h3>contextPath="+contextPath+"</h3>");
 		out.print("<h3>command="+command+"</h3>");
 		
-		out.print("<h3>helloWorld!</h3>");
-		
-		out.print("<h3>master branch change a code</h3>");
-		out.print("<h3>hotfix branch change a code</h3>");
 		
 		//service객체 선언
 		Action action = null;
@@ -47,13 +44,13 @@ public class FrontController extends HttpServlet {
 		
 		//command 프로퍼티 파일 읽어 들이기
 		Properties prop = new Properties();
-		FileInputStream fis = new FileInputStream("C:\\jspProj\\CGVProj\\src\\cgv\\controller\\command.properties");
+		FileInputStream fis = new FileInputStream("C:\\Users\\Administrator\\git\\cgv_project\\CGVProj\\src\\com\\cgv\\controller\\command.properties");
 		prop.load(fis);
 		fis.close();
 		
 		String value = prop.getProperty(command).trim(); //trim 공백제거
-		
 		System.out.println("prop.getProperty="+value);
+		
 		
 		if(value.substring(0, 7).equals("execute")) {
 			StringTokenizer st = new StringTokenizer(value, "|");
@@ -61,9 +58,8 @@ public class FrontController extends HttpServlet {
 			String url_2 = st.nextToken();
 			System.out.println("url_1="+url_1);
 			System.out.println("url_2="+url_2);
-			Class url;
 			try {
-				url = Class.forName(url_2);
+				Class url = Class.forName(url_2);
 				action = (Action)url.newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -75,5 +71,18 @@ public class FrontController extends HttpServlet {
 			forward.setPath(value);
 			System.out.println("value="+value);
 		}
+		
+		//뷰로 이동처리
+		if(forward!=null) {
+			if(forward.isRedirect()) {//redirect값을 true로 설정햇을 경우
+				response.sendRedirect(forward.getPath()); 
+			}else {
+				RequestDispatcher dispatcher = request.getRequestDispatcher(forward.getPath());
+				System.out.println("forward.getpath()="+forward.getPath());
+				
+				dispatcher.forward(request, response);
+			}
+			
+		}//if(forward!=null) 끝
 	}
 }
